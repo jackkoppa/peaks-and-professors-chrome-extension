@@ -1,27 +1,30 @@
 {
-  "manifest_version": 2,
-
-  "name": "Chrome Extension TypeScript Starter",
-  "description": "Chrome Extension, TypeScript, Visual Studio Code",
-  "version": "1.0",
-
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html"
-  },
-
-  "content_scripts": [
-      {
-          "matches": ["https://*.squarespace.com/*"],
-          "js": ["js/vendor.js", "js/content_script.js"]
-      }
-  ],
-
-  "background": {
-    "scripts": ["js/vendor.js", "js/background.js"]
-  },
-
-  "permissions": [
-    "storage"
-  ]
+    "manifest_version": 2,
+    "name": "Peaks & Professors",
+    "description": "Assists w/ Peaks & Professors web automation tasks - primarily admin panel automation on Squarespace",
+    "version": "1.0",
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.squarespace.com/*"
+            ],
+            "js": [
+                "js/vendor.js",
+                "js/content_script.js"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "js/vendor.js",
+            "js/background.js"
+        ]
+    },
+    "permissions": [
+        "storage"
+    ]
 }
