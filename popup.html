@@ -1,0 +1,25 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+
+<head>
+    <title>Peaks &amp; Professors</title>
+    <script src="popup.js"></script>
+</head>
+
+<body>
+    <h1>Select an Action:</h1>
+    <div id="container">
+        <ul>
+            <li>
+                <button onclick="startEvents()">Events</button>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
