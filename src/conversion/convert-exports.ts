@@ -1,5 +1,5 @@
-import { TripRecord, TripRecordDetails } from './models/trip-record.model';
-import { WpExport  } from './models/wp-export.model';
+import { TripRecord, TripRecordDetails } from './trip-record.models';
+import { WpExport  } from './wp-export.model';
 
 export class ConvertExports {
     private wpExports: WpExport[] = [];

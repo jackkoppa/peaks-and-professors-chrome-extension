@@ -1,5 +1,6 @@
-const webpack = require("webpack");
+const webpack = require('webpack');
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -8,8 +9,8 @@ module.exports = {
         'background': path.join(__dirname, 'src/background.ts')        
     },
     output: {
-        path: path.join(__dirname, 'dist/js'),
-        filename: '[name].js'
+        path: path.join(__dirname, 'dist'),
+        filename: 'scripts/[name].js'
     },
     module: {
         loaders: [{
@@ -22,15 +23,12 @@ module.exports = {
         extensions: ['.ts', '.tsx', '.js']
     },
     plugins: [
-        // have removed vendor files for now
-
-        // pack common vender files
-        // new webpack.optimize.CommonsChunkPlugin({
-        //     name: 'vendor', 
-        //     minChunks: Infinity
-        // })
-
-        // minify
-        // new webpack.optimize.UglifyJsPlugin()
+        new CopyWebpackPlugin([
+            { 
+                context: 'src',
+                from: '**/*', 
+                to: '', 
+                ignore: ['**/*.ts']}            
+        ])
     ]
 };
