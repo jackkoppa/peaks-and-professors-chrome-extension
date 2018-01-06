@@ -6,7 +6,6 @@ module.exports = {
         popup: path.join(__dirname, 'src/popup.ts'),
         content_script: path.join(__dirname, 'src/content_script.ts'),
         background: path.join(__dirname, 'src/background.ts'),
-        convert_exports: path.join(__dirname, 'src/convert-exports.ts'),
         vendor: ['jquery']
     },
     output: {

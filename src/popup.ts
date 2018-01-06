@@ -35,7 +35,14 @@ $(function () {
 
     $('#convert-exports').click(() => {
         const wpExports = JSON.parse($('#wp-exports').val() as string) as WpExport[];
-        console.log('original wpExports:', wpExports);
-        console.log(convertExports.exportsToTripRecords(wpExports))
+        const tripRecords = convertExports.exportsToTripRecords(wpExports);
+        chrome.storage.local.set({
+            wpExports: wpExports,
+            tripRecords: tripRecords
+        }, () => {
+           chrome.storage.local.get(items => {
+               console.log(items.tripRecords);
+           });
+        });
     });
 });
