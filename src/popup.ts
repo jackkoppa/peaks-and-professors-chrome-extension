@@ -1,11 +1,10 @@
-import * as $ from 'jquery';
-
 import { ConvertExports } from './convert-exports';
 import { WpExport } from './models/wp-export.model';
 
-let count = 0;
 
-$(function () {
+window.onload = () => {
+    let count = 0;
+
     const convertExports: ConvertExports = new ConvertExports();
     const queryInfo = {
         active: true,
@@ -13,28 +12,17 @@ $(function () {
     };
 
     chrome.tabs.query(queryInfo, function (tabs) {
-        $('#url').text(tabs[0].url);
-        $('#time').text(new Date().toLocaleString());
+        document.getElementById('time').innerText = new Date().toLocaleString();
     });
 
     chrome.browserAction.setBadgeText({ text: '' + count });
-    $('#countUp').click(() => {
+    document.getElementById('count-up').addEventListener('click', () => {
         chrome.browserAction.setBadgeText({ text: '' + count++ });
     });
 
-    $('#changeBackground').click(() => {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                color: '#555555'
-            },
-                function (msg) {
-                    console.log("result message:", msg);
-                });
-        });
-    });
-
-    $('#convert-exports').click(() => {
-        const wpExports = JSON.parse($('#wp-exports').val() as string) as WpExport[];
+    document.getElementById('convert-exports').addEventListener('click', () => {
+        const wpExportsVal = (document.getElementById('wp-exports') as HTMLTextAreaElement).value;
+        const wpExports = JSON.parse(wpExportsVal) as WpExport[];
         const tripRecords = convertExports.exportsToTripRecords(wpExports);
         chrome.storage.local.set({
             wpExports: wpExports,
@@ -45,4 +33,4 @@ $(function () {
            });
         });
     });
-});
+}

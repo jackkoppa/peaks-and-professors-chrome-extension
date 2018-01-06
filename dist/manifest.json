@@ -13,14 +13,12 @@
                 "https://*.squarespace.com/*"
             ],
             "js": [
-                "js/vendor.js",
-                "js/content_script.js"
+                "js/content-script.js"
             ]
         }
     ],
     "background": {
         "scripts": [
-            "js/vendor.js",
             "js/background.js"
         ]
     },
