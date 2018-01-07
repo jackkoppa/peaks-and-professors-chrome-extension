@@ -1,25 +1,20 @@
-import { MessageType, PortName, Origin } from './message-type.models';
+import { Tabs } from '../tabs/tabs';
+
+import { Message, MessageType, Origin } from './message-type.models';
 
 export class Messaging {
-    private port: chrome.runtime.Port;
-    private connectionInfo: chrome.runtime.ConnectInfo;
+    private tabId: number = 0;
 
     constructor(
-        private initiating: boolean,
-        private location: Origin,
-        private portName: PortName = PortName.Trips
+        private origin: Origin
     ) {
-        this.connectionInfo = { name: this.connectionInfo as string }; 
-        if (this.location === 'content')
-            this.port = chrome.runtime.connect(this.connectionInfo);
-        else if (this.location === 'popup')
-            this.port = chrome.tabs.connect(0, this.connectionInfo);
+        if (this.origin === 'popup') Tabs.useDefaultId(tabId => this.tabId = tabId);
     }
 
-    public send(messageType: MessageType, responseCallback?: (response: any) => void): void {
-        responseCallback ? 
-            chrome.runtime.sendMessage(messageType, responseCallback) :
-            chrome.runtime.sendMessage(messageType);
+    public send(messageType: MessageType, messageValue?: any, responseCallback?: (response: any) => void): void {
+        this.origin === 'popup' ? 
+            chrome.tabs.sendMessage(this.tabId, this.message(messageType, messageValue), responseCallback) :
+            chrome.runtime.sendMessage(this.message(messageType, messageValue), responseCallback);
     }
 
     public subscribe(messageType: MessageType, action: () => void, responseCallback?: (response: any) => void): void {
@@ -29,5 +24,12 @@ export class Messaging {
             if (message[messageType])
                 action();
         });
+    }
+
+    private message(messageType: MessageType, messageValue?: any): Message {
+        return {
+            type: messageType,
+            value: messageValue ? messageValue : undefined
+        }
     }
 }

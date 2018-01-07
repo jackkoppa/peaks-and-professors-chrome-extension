@@ -60,52 +60,105 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const events_panel_interaction_1 = __webpack_require__(4);
-const eventsPanelInteraction = new events_panel_interaction_1.EventsPanelInteraction();
-//const messaging = new Messaging();
-console.log('content-scripts initialized');
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log('content-scripts received a message', message);
-    window.alert('content-scripts received a message');
-});
-// chrome.runtime.onConnect.addListener(port => {
-//     if (port.name === 'trips') {
-//         port.onMessage.addListener(message => {
-//             console.log('received message in content from popup:', message);
-//         });
-//     }
-//     else port.disconnect();
-// });
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-//     console.log('got message from content-scripts that looks like:', message);
-//     if (message[MessageType.TripsUpdated]) {
-//         chrome.storage.local.get(items => {
-//             window.alert(`Got the message! Here's the title of the first trip record: ${items.tripRecords[0].post_title}`);        
-//         });  
-//     }
-// });
-// messaging.subscribe(MessageType.TripsUpdated, () => {
-//     chrome.storage.local.get(items => {
-//         window.alert(`Got the message! Here's the title of the first trip record: ${items.tripRecords[0].post_title}`);        
-//     });    
-// }); 
+var MessageType;
+(function (MessageType) {
+    MessageType[MessageType["TripsUpdated"] = 1] = "TripsUpdated";
+    MessageType[MessageType["RunNextTrip"] = 2] = "RunNextTrip";
+})(MessageType = exports.MessageType || (exports.MessageType = {}));
 
 
 /***/ }),
-/* 4 */
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tabs_1 = __webpack_require__(2);
+class Messaging {
+    constructor(origin) {
+        this.origin = origin;
+        this.tabId = 0;
+        if (this.origin === 'popup')
+            tabs_1.Tabs.useDefaultId(tabId => this.tabId = tabId);
+    }
+    send(messageType, messageValue, responseCallback) {
+        this.origin === 'popup' ?
+            chrome.tabs.sendMessage(this.tabId, this.message(messageType, messageValue), responseCallback) :
+            chrome.runtime.sendMessage(this.message(messageType, messageValue), responseCallback);
+    }
+    subscribe(messageType, action, responseCallback) {
+        console.log('subscribed called');
+        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+            console.log('got message that looks like:', message);
+            if (message[messageType])
+                action();
+        });
+    }
+    message(messageType, messageValue) {
+        return {
+            type: messageType,
+            value: messageValue ? messageValue : undefined
+        };
+    }
+}
+exports.Messaging = Messaging;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const environment_1 = __webpack_require__(8);
+class Tabs {
+    static useDefaultId(callback) {
+        chrome.tabs && chrome.tabs.query({ url: environment_1.environment.urlMatch }, tabs => {
+            callback(tabs && tabs[0].id);
+        });
+    }
+}
+exports.Tabs = Tabs;
+
+
+/***/ }),
+/* 3 */,
+/* 4 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const events_panel_interaction_1 = __webpack_require__(6);
+const message_type_models_1 = __webpack_require__(0);
+const messaging_1 = __webpack_require__(1);
+const eventsPanelInteraction = new events_panel_interaction_1.EventsPanelInteraction();
+//const messaging = new Messaging();
+console.log('content-scripts initialized');
+const messaging = new messaging_1.Messaging('content');
+messaging.subscribe(message_type_models_1.MessageType.RunNextTrip, () => {
+    window.alert('got RunNextTrip subscription');
+});
+messaging.subscribe(message_type_models_1.MessageType.TripsUpdated, () => {
+    window.alert('got TripsUpdated subscription');
+});
+
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -114,6 +167,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class EventsPanelInteraction {
 }
 exports.EventsPanelInteraction = EventsPanelInteraction;
+
+
+/***/ }),
+/* 7 */,
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.environment = {
+    urlMatch: 'https://*.squarespace.com/*'
+};
 
 
 /***/ })

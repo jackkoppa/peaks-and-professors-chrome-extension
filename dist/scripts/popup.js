@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,12 +70,83 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const convert_exports_1 = __webpack_require__(1);
-const message_type_models_1 = __webpack_require__(2);
+var MessageType;
+(function (MessageType) {
+    MessageType[MessageType["TripsUpdated"] = 1] = "TripsUpdated";
+    MessageType[MessageType["RunNextTrip"] = 2] = "RunNextTrip";
+})(MessageType = exports.MessageType || (exports.MessageType = {}));
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tabs_1 = __webpack_require__(2);
+class Messaging {
+    constructor(origin) {
+        this.origin = origin;
+        this.tabId = 0;
+        if (this.origin === 'popup')
+            tabs_1.Tabs.useDefaultId(tabId => this.tabId = tabId);
+    }
+    send(messageType, messageValue, responseCallback) {
+        this.origin === 'popup' ?
+            chrome.tabs.sendMessage(this.tabId, this.message(messageType, messageValue), responseCallback) :
+            chrome.runtime.sendMessage(this.message(messageType, messageValue), responseCallback);
+    }
+    subscribe(messageType, action, responseCallback) {
+        console.log('subscribed called');
+        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+            console.log('got message that looks like:', message);
+            if (message[messageType])
+                action();
+        });
+    }
+    message(messageType, messageValue) {
+        return {
+            type: messageType,
+            value: messageValue ? messageValue : undefined
+        };
+    }
+}
+exports.Messaging = Messaging;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const environment_1 = __webpack_require__(8);
+class Tabs {
+    static useDefaultId(callback) {
+        chrome.tabs && chrome.tabs.query({ url: environment_1.environment.urlMatch }, tabs => {
+            callback(tabs && tabs[0].id);
+        });
+    }
+}
+exports.Tabs = Tabs;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const convert_exports_1 = __webpack_require__(4);
+const message_type_models_1 = __webpack_require__(0);
+const messaging_1 = __webpack_require__(1);
 window.onload = () => {
     let count = 0;
     const convertExports = new convert_exports_1.ConvertExports();
-    //const messaging: Messaging = new Messaging();
+    const messaging = new messaging_1.Messaging('popup');
     const queryInfo = {
         active: true,
         currentWindow: true
@@ -90,7 +161,7 @@ window.onload = () => {
     chrome.browserAction.setBadgeText({ text: '' + count });
     document.getElementById('count-up').addEventListener('click', () => {
         chrome.browserAction.setBadgeText({ text: '' + count++ });
-        chrome.runtime.sendMessage(message_type_models_1.MessageType.TripsUpdated);
+        messaging.send(message_type_models_1.MessageType.RunNextTrip);
     });
     document.getElementById('convert-exports').addEventListener('click', () => {
         const wpExportsVal = document.getElementById('wp-exports').value;
@@ -102,10 +173,7 @@ window.onload = () => {
         }, () => {
             chrome.storage.local.get(items => {
                 console.log(items.tripRecords);
-                chrome.tabs.query({}, (results => {
-                    const tab = results.find(tab => new RegExp(/Peaks.*Professors/).test(tab.title));
-                    chrome.tabs.sendMessage(tab.id, 'sample message from popup to ' + tab.title);
-                }));
+                messaging.send(message_type_models_1.MessageType.TripsUpdated);
             });
         });
     });
@@ -113,7 +181,7 @@ window.onload = () => {
 
 
 /***/ }),
-/* 1 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -167,21 +235,18 @@ exports.ConvertExports = ConvertExports;
 
 
 /***/ }),
-/* 2 */
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var MessageType;
-(function (MessageType) {
-    MessageType[MessageType["TripsUpdated"] = 1] = "TripsUpdated";
-    MessageType[MessageType["RunNextTrip"] = 2] = "RunNextTrip";
-})(MessageType = exports.MessageType || (exports.MessageType = {}));
-var PortName;
-(function (PortName) {
-    PortName[PortName["Trips"] = 1] = "Trips";
-})(PortName = exports.PortName || (exports.PortName = {}));
+exports.environment = {
+    urlMatch: 'https://*.squarespace.com/*'
+};
 
 
 /***/ })

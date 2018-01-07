@@ -8,7 +8,7 @@ window.onload = () => {
     let count = 0;
 
     const convertExports: ConvertExports = new ConvertExports();
-    //const messaging: Messaging = new Messaging();
+    const messaging: Messaging = new Messaging('popup');
     const queryInfo = {
         active: true,
         currentWindow: true
@@ -27,7 +27,7 @@ window.onload = () => {
     chrome.browserAction.setBadgeText({ text: '' + count });
     document.getElementById('count-up').addEventListener('click', () => {
         chrome.browserAction.setBadgeText({ text: '' + count++ });
-        chrome.runtime.sendMessage(MessageType.TripsUpdated);
+        messaging.send(MessageType.RunNextTrip);
     });
 
     document.getElementById('convert-exports').addEventListener('click', () => {
@@ -39,12 +39,8 @@ window.onload = () => {
             tripRecords: tripRecords
         }, () => {
            chrome.storage.local.get(items => {
-               console.log(items.tripRecords);
-               chrome.tabs.query({},(results => {
-                   const tab = results.find(tab => new RegExp(/Peaks.*Professors/).test(tab.title));
-
-                   chrome.tabs.sendMessage(tab.id, 'sample message from popup to ' + tab.title);
-               }))
+               console.log(items.tripRecords);    
+               messaging.send(MessageType.TripsUpdated);           
            });
         });
     });
