@@ -10,17 +10,29 @@
 <body>
     <div class="container">
         <h3>Event JSON, exported from WordPress</h3>
-        <textarea name="wp-exports" id="wp-exports" cols="30" rows="10"></textarea>
+        <textarea   name="wp-exports" 
+                    id="wp-exports" 
+                    cols="70" 
+                    rows="10"></textarea>
         <br/>
         <button id="convert-exports">Convert to Usable JSON</button>
 
         <h3>Ready for Import</h3>
-        <textarea name="ready-for-import" id="ready-for-import" cols="30" rows="10"></textarea>
+        <textarea   name="remaining" 
+                    id="remaining" 
+                    cols="70"
+                    rows="10"
+                    disabled></textarea>
         <br/>
-        <button id="start-import">Start Import</button>
+        <button id="start-import" 
+                disabled>Start Import</button>
 
         <h3>Successfully Imported</h3>
-        <textarea name="successfully-imported" id="successfully-imported" cols="30" rows="10"></textarea>
+        <textarea   name="imported" 
+                    id="imported" 
+                    cols="70" 
+                    rows="10"
+                    disabled></textarea>
         <br/>
 
         <button id="count-up">Count Up</button>

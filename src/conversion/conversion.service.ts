@@ -1,13 +1,14 @@
 import { TripRecord, TripRecordDetails } from './trip-record.models';
 import { WpExport  } from './wp-export.model';
 
-export class ConvertExportsService {
+export class ConversionService {
     private wpExports: WpExport[] = [];
     private tripRecords: TripRecord[] = [];
     public exportsToTripRecords(wpExports: WpExport[]): TripRecord[] {
         this.wpExports = wpExports;
         this.initializeTripRecords();
         this.addDetailsToRecords();
+        this.sortRecords();
         return this.tripRecords;
     }
 
@@ -18,6 +19,16 @@ export class ConvertExportsService {
         });
     }
 
+    private addDetailsToRecords(): void {
+        this.wpExports.forEach(wpExport => {
+            this.addDetail(wpExport);
+        });
+    }
+
+    private sortRecords(): void {
+        this.tripRecords.sort((a, b) => a.ID - b.ID);
+    }
+
     private newRecordFromExport(wpExport: WpExport): TripRecord {
         return {
             ID: wpExport.ID,
@@ -25,12 +36,6 @@ export class ConvertExportsService {
             imported: false,
             details: {}
         }
-    }
-
-    private addDetailsToRecords(): void {
-        this.wpExports.forEach(wpExport => {
-            this.addDetail(wpExport);
-        });
     }
 
     private addDetail(wpExport: WpExport): void {
@@ -46,4 +51,6 @@ export class ConvertExportsService {
             console.error(`duplicate '${wpExport.meta_key}' keys for trip ID ${tripRecord.ID},` +
              `with values '${tripRecord.details[wpExport.meta_key]}' & '${wpExport.meta_value}'`);
     }
+
+
 }

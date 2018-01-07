@@ -5,7 +5,9 @@ export interface Message {
 
 export enum MessageType {
     TripsUpdated = 1,
-    RunNextTrip
+    RunNextTrip,
+    SuccessfulTripImport,
+    FailedTripImport
 }
 
-export type Origin = 'popup' | 'content';
+export type Origin = 'popup' | 'background' | 'content';

@@ -1,8 +1,14 @@
+import { MessagingService } from "./messaging/messaging.service";
+import { MessageType } from "./messaging/message-type.models";
 
-function polling() {
-    console.log('polling');
-    setTimeout(polling, 1000 * 30);
-}
+console.log('initialized background');
 
-polling();
+const messagingService: MessagingService = new MessagingService('background');
 
+messagingService.subscribe(MessageType.SuccessfulTripImport, () => {
+    console.log('background received successful trip import')
+});
+
+messagingService.subscribe(MessageType.FailedTripImport, () => {
+    console.log('background received failed trip import')
+});
