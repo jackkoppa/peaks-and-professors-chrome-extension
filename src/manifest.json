@@ -13,7 +13,7 @@
                 "https://*.squarespace.com/*"
             ],
             "js": [
-                "scripts/content-script.js"
+                "scripts/squarespace.js"
             ]
         }
     ],
