@@ -1,14 +1,14 @@
-import { Tabs } from '../tabs/tabs';
+import { TabsHelper } from '../tabs/tabs-helper';
 
 import { Message, MessageType, Origin } from './message-type.models';
 
-export class Messaging {
+export class MessagingService {
     private tabId: number = 0;
 
     constructor(
         private origin: Origin
     ) {
-        if (this.origin === 'popup') Tabs.useDefaultId(tabId => this.tabId = tabId);
+        if (this.origin === 'popup') TabsHelper.useDefaultId(tabId => this.tabId = tabId);
     }
 
     public send(messageType: MessageType, messageValue?: any, responseCallback?: (response: any) => void): void {
@@ -18,10 +18,8 @@ export class Messaging {
     }
 
     public subscribe(messageType: MessageType, action: () => void, responseCallback?: (response: any) => void): void {
-        console.log('subscribed called');
         chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-            console.log('got message that looks like:', message);
-            if (message[messageType])
+            if ((message as Message).type === messageType)
                 action();
         });
     }

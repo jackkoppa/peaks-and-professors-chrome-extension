@@ -1,7 +1,7 @@
 import { TripRecord, TripRecordDetails } from './trip-record.models';
 import { WpExport  } from './wp-export.model';
 
-export class ConvertExports {
+export class ConvertExportsService {
     private wpExports: WpExport[] = [];
     private tripRecords: TripRecord[] = [];
     public exportsToTripRecords(wpExports: WpExport[]): TripRecord[] {
@@ -45,6 +45,5 @@ export class ConvertExports {
         if (detailExists && detailsDoNotMatch)
             console.error(`duplicate '${wpExport.meta_key}' keys for trip ID ${tripRecord.ID},` +
              `with values '${tripRecord.details[wpExport.meta_key]}' & '${wpExport.meta_value}'`);
-            //throw new Error (`duplicate '${wpExport.meta_key}' keys for trip ID ${tripRecord.ID}`);            
     }
 }

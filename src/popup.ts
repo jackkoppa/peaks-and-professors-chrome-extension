@@ -1,14 +1,14 @@
-import { ConvertExports } from './conversion/convert-exports';
+import { ConvertExportsService } from './conversion/convert-exports.service';
 import { MessageType } from './messaging/message-type.models';
-import { Messaging} from './messaging/messaging';    
+import { MessagingService} from './messaging/messaging.service';    
 import { WpExport } from './conversion/wp-export.model';
 
 
 window.onload = () => {
     let count = 0;
 
-    const convertExports: ConvertExports = new ConvertExports();
-    const messaging: Messaging = new Messaging('popup');
+    const convertExports: ConvertExportsService = new ConvertExportsService();
+    const messagingService: MessagingService = new MessagingService('popup');
     const queryInfo = {
         active: true,
         currentWindow: true
@@ -27,7 +27,7 @@ window.onload = () => {
     chrome.browserAction.setBadgeText({ text: '' + count });
     document.getElementById('count-up').addEventListener('click', () => {
         chrome.browserAction.setBadgeText({ text: '' + count++ });
-        messaging.send(MessageType.RunNextTrip);
+        messagingService.send(MessageType.RunNextTrip);
     });
 
     document.getElementById('convert-exports').addEventListener('click', () => {
@@ -40,7 +40,7 @@ window.onload = () => {
         }, () => {
            chrome.storage.local.get(items => {
                console.log(items.tripRecords);    
-               messaging.send(MessageType.TripsUpdated);           
+               messagingService.send(MessageType.TripsUpdated);           
            });
         });
     });
