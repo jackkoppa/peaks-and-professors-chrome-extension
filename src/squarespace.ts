@@ -13,8 +13,13 @@ messagingService.subscribe(MessageType.RunNextTrip, () => {
     StorageHelper.getLocal(localStorage => {
         squarespaceFlowService = new SquarespaceFlowService(TripsHelper.getNextForImport(localStorage.tripRecords));
         squarespaceFlowService.attemptImport()
-            .then(result => messagingService.send(MessageType.SuccessfulTripImport))
-            .catch(error => messagingService.send(MessageType.FailedTripImport, error));
+            .then(result => {
+                console.log('successfully imported in squarespace, with result:', result)
+                messagingService.send(MessageType.SuccessfulTripImport, result)
+            }, error => {
+                console.log('failed to import in squarespace, with error:', error)
+                messagingService.send(MessageType.FailedTripImport, error)
+            });
     });
 });
 

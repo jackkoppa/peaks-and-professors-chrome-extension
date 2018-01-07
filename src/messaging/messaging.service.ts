@@ -8,7 +8,6 @@ export class MessagingService {
         return this.origin === 'popup' || this.origin === 'background';
     }
 
-
     constructor(
         private origin: Origin
     ) {
@@ -21,10 +20,10 @@ export class MessagingService {
             chrome.runtime.sendMessage(this.message(messageType, messageValue), responseCallback);
     }
 
-    public subscribe(messageType: MessageType, action: () => void, responseCallback?: (response: any) => void): void {
+    public subscribe(messageType: MessageType, action: (message: Message) => void, responseCallback?: (response: any) => void): void {
         chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             if ((message as Message).type === messageType)
-                action();
+                action(message);
         });
     }
 
